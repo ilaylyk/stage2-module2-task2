@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
@@ -21,13 +22,15 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        boolean isLoginValid = req.getParameter("login") != null && Users.getInstance().getUsers().contains(req.getParameter("login"));
-        boolean isPasswordValid = req.getParameter("password") != null && !req.getParameter("password").trim().isEmpty();
-        if (isLoginValid && isPasswordValid) {
-            req.getSession().setAttribute("user", "user");
-            resp.sendRedirect(" /user/hello.jsp");
+        String login = req.getParameter("login");
+        String password = req.getParameter("password");
+        List<String> users = Users.getInstance().getUsers();
+
+        if (users.contains(login) && !password.isEmpty()) {
+            req.getSession().setAttribute("user", login);
+            resp.sendRedirect("/user/hello.jsp");
         } else {
-            req.getRequestDispatcher("/login.jsp.*/").forward(req, resp);
+            getServletContext().getRequestDispatcher("/login.jsp").forward(req, resp);
         }
     }
 }
